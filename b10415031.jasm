@@ -1,0 +1,12 @@
+class proj3
+{
+	field static int FNminus1 = 1
+		istore 1
+		istore 2
+		istore 2
+		putstatic int proj3.FNminus1
+		getstatic java.io.PrintStream java.lang.System.out
+		invokevirtual void java.io.PrintStream.println(java.lang.String)
+		getstatic java.io.PrintStream java.lang.System.out
+		invokevirtual void java.io.PrintStream.println(java.lang.String)
+}
