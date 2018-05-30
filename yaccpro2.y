@@ -7,7 +7,7 @@
 #include "symbols.h"
 #include<iostream>
 #include<vector>
-#include<string>
+#include<string.h>
 FILE *java_code;
 
 extern "C" {							 //use C++
@@ -16,6 +16,10 @@ extern "C" {							 //use C++
 }
 
 SymbolTables symt = SymbolTables();      //create symbol_table
+
+
+int isconst = 0;
+int islocal = 0;
 %}
 
 %union									//def struct for value passing
@@ -194,13 +198,13 @@ var_declared:
 			Trace("Reducing to var_declared\n");
 			varentry v = varNormal($3.sval,$5.token_type,false,symt.isGlobal());
 
-			if($7.token_type==T_INT && $5.token_type==T_FLOAT){
+			/*if($7.token_type==T_INT && $5.token_type==T_FLOAT){
 				v.data.fval = $7.fval;
 			}
 			else if($5.token_type != $7.token_type){
 				yyerror("Error : exp type not same");
-			}
-			else if($7.token_type==T_INT){
+			}*/
+			if($7.token_type==T_INT){
 				v.data.ival = $7.ival;
 				
 				if(symt.isGlobal()==1)
@@ -227,49 +231,53 @@ var_declared:
 		}
 		;
 const_declared:
-		LET IDENTIFIER ASSIGN exp SEMICOLON{													
+		LET IDENTIFIER ASSIGN {isconst = 1;}
+		exp SEMICOLON{													
 			Trace("Reducing to const_declared\n");									//constant declare, return its name type value initial or not, put into symbol table
-			varentry v = varNormal($2.sval,$4.token_type,true,symt.isGlobal());						//if redefined,error
-			if($4.token_type ==T_INT){
-				v.data.ival = $4.ival;
+			varentry v = varNormal($2.sval,$5.token_type,true,symt.isGlobal());						//if redefined,error
+			if($5.token_type ==T_INT){
+				v.data.ival = $5.ival;
 			}
-			else if($4.token_type ==T_FLOAT){
-				v.data.fval = $4.fval;
+			else if($5.token_type ==T_FLOAT){
+				v.data.fval = $5.fval;
 			}
-			else if($4.token_type ==T_STR){
-				v.data.sval = $4.sval;
+			else if($5.token_type ==T_STR){
+				v.data.sval = $5.sval;
 			}
-			else if($4.token_type ==T_BOOL){
-				v.data.bval = $4.bval;
+			else if($5.token_type ==T_BOOL){
+				v.data.bval = $5.bval;
 			}
 			if(!symt.addvar(v))
 				yyerror("Error: redefined");
+			isconst = 0;
 		}
 		|
-		LET IDENTIFIER COLON type ASSIGN exp SEMICOLON{
+		LET IDENTIFIER COLON type ASSIGN {isconst = 1;}
+		exp SEMICOLON{
 			Trace("Reducing to const_declared\n");
 			varentry v = varNormal($2.sval,$4.token_type,true,symt.isGlobal());
 
-			if($6.token_type==T_INT && $4.token_type==T_FLOAT){
-				v.data.fval = $6.ival;
+			if($7.token_type==T_INT && $4.token_type==T_FLOAT){
+				v.data.fval = $7.ival;
 			}
-			else if($4.token_type != $6.token_type){
+			else if($4.token_type != $7.token_type){
 				yyerror("Error : exp type not same");
 			}
-			else if($6.token_type==T_INT){
-				v.data.ival = $6.ival;
+			else if($7.token_type==T_INT){
+				v.data.ival = $7.ival;
 			}
-			else if($6.token_type==T_FLOAT){
-				v.data.fval = $6.fval;
+			else if($7.token_type==T_FLOAT){
+				v.data.fval = $7.fval;
 			}
-			else if($6.token_type==T_STR){
-				v.data.sval = $6.sval;
+			else if($7.token_type==T_STR){
+				v.data.sval = $7.sval;
 			}
-			else if($6.token_type==T_BOOL){
-				v.data.bval = $6.bval;
+			else if($7.token_type==T_BOOL){
+				v.data.bval = $7.bval;
 			}
 			if(!symt.addvar(v))
 				yyerror("Error: redefined");
+			isconst = 0;
 		}
 		;
 arr_declared:
@@ -332,12 +340,23 @@ statements:
 			;
 statement:																	
 		IDENTIFIER ASSIGN exp SEMICOLON{							//statement include identifier reassign, print/println expression, return, block, if else,while loop, function invoke
-			Trace("Reducing to statement\n");
 			varentry vcheck = symt.lookup($1.sval);
-			if(vcheck.global==1)
-				fprintf(java_code,"\t\tputstatic int proj3.%s\n",$1.sval);
-			else
-				fprintf(java_code,"\t\tistore %d\n",vcheck.javaStack_index);
+			Trace("Reducing to statement vcheck\n");
+			
+			if(vcheck.name!=" "){
+				if(vcheck.isconst!=1){
+					if(vcheck.global==1)
+						fprintf(java_code,"\t\tputstatic int proj3.%s\n",$1.sval);
+					else
+						fprintf(java_code,"\t\tistore %d\n",vcheck.javaStack_index);
+				}
+				else{
+					yyerror("this is constant");
+				}
+			}
+			else{
+				yyerror("not define");
+			}
 		} |
 		IDENTIFIER LEFT_BRACK interger_exp RIGHT_BRACK ASSIGN exp SEMICOLON{
 			Trace("Reducing to statement\n");
@@ -381,44 +400,115 @@ statement:
 			Trace("Reducing to statement func_invoke\n");
 		}
 		;
-exp:
-	MINUS exp %prec UMINUS{							//for expression action include +-*/% and integer,real,string,bool
+exp:                                                                       //for expression action include +-*/% and integer,real,string,bool
+	MINUS exp %prec UMINUS{
+		if($2.token_type==T_INT){                           //negative
+			$$.token_type=T_INT;
+			$$.ival = -$2.ival;
+			fprintf(java_code,"\t\tineg\n");
+		}							
 		Trace("Reducing to exp\n");
 	} |
-	exp PLUS exp{
+	exp PLUS exp{                                             //plus
+		if($1.token_type==T_INT&&$3.token_type==T_INT){
+			$$.token_type=T_INT;
+			$$.ival = $1.ival + $3.ival;
+			fprintf(java_code,"\t\tiadd\n");
+		}
 		Trace("Reducing to exp\n");
 	} |
-	exp MINUS exp{
+	exp MINUS exp{                                            //minus
+		if($1.token_type==T_INT&&$3.token_type==T_INT){
+			$$.token_type=T_INT;
+			$$.ival = $1.ival - $3.ival;
+			fprintf(java_code,"\t\tisub\n");
+		}
 		Trace("Reducing to exp\n");
 	} |
-	exp MUTI exp{
+	exp MUTI exp{                                              //muti
+		if($1.token_type==T_INT&&$3.token_type==T_INT){
+			$$.token_type=T_INT;
+			$$.ival = $1.ival * $3.ival;
+			fprintf(java_code,"\t\timul\n");
+		}
 		Trace("Reducing to exp\n");
 	} |
-	exp DIVIDE exp{
+	exp DIVIDE exp{                                             //div
+		if($1.token_type==T_INT&&$3.token_type==T_INT){
+			$$.token_type=T_INT;
+			$$.ival = $1.ival / $3.ival;
+			fprintf(java_code,"\t\tidiv\n");
+		}
 		Trace("Reducing to exp\n");
 	} |
-	exp MOD exp{
+	exp MOD exp{                                                //mod
+		if($1.token_type==T_INT&&$3.token_type==T_INT){
+			$$.token_type=T_INT;
+			$$.ival = $1.ival % $3.ival;
+			fprintf(java_code,"\t\tirem\n");
+		}
 		Trace("Reducing to exp\n");
 	} |
 	LEFT_PARENT exp RIGHT_PARENT{
 		Trace("Reducing to exp\n");
 	} |
-	interger_exp{
+	INTEGER{
+		$$.ival = $1.ival;
+		$$.token_type = T_INT;
+		if(islocal = 1)
+			if(isconst!=1)
+				fprintf(java_code,"\t\tsipush %d\n",$1.ival);
 		Trace("Reducing to exp\n");
 	} |
 	real_exp{
 		Trace("Reducing to exp\n");
 	} |
 	bool_exp{
+		$$.token_type = T_BOOL;
+		$$.bval = $1.bval;
 		Trace("Reducing to exp\n");
 	} |
 	string_exp{
 		Trace("Reducing to exp\n");
+		if(isconst!=1)
+			fprintf(java_code,"\t\tldc \"%s\"\n",$1.sval);
+		$$.token_type=T_STR;
+		strcpy($$.sval,$1.sval);
 	} |
 	func_invoke{
 		Trace("Reducing to exp\n");
 	} |
 	IDENTIFIER{
+		varentry vcheck = symt.lookup($1.sval);
+		if(vcheck.name!=" "){
+			$$.token_type = vcheck.type;
+			if(vcheck.type==T_INT){                                                 //int assign
+				$$.ival = vcheck.data.ival;
+				if(vcheck.global==1){
+					fprintf(java_code,"\t\tgetstatic int proj3.%s\n",$1.sval);
+				}
+				else{
+					if(vcheck.isconst==0)
+						fprintf(java_code,"\t\tiload %d\n",vcheck.javaStack_index);
+					else
+						fprintf(java_code,"\t\tsipush %d\n",vcheck.data.ival);
+				}
+			}
+			else if(vcheck.type==T_BOOL){                                            //bool assign
+				if(vcheck.global==1){
+					fprintf(java_code,"\t\tgetstatic bool proj3.%s\n",$1.sval);
+				}
+				else{
+					if(vcheck.isconst==0)
+						fprintf(java_code,"\t\tiload %d\n",vcheck.javaStack_index);
+					else
+						fprintf(java_code,"\t\ticonst_ %d\n",vcheck.data.bval);
+				}
+			}
+		}
+		else{
+				yyerror("not define");
+		}
 		Trace("Reducing to exp\n");
 	} |
 	IDENTIFIER LEFT_BRACK interger_exp RIGHT_BRACK{
@@ -426,7 +516,10 @@ exp:
 	}
 	;
 interger_exp:	
-		INTEGER{														//for integer
+		INTEGER{
+			$$.ival = $1.ival;
+			$$.token_type = T_INT;
+																	//for integer
 			Trace("Reducing to interger_exp\n");
 		}
 		;
@@ -440,11 +533,13 @@ bool_exp:
 			Trace("Reducing to bool_exp\n");
 			$$.token_type = T_BOOL;
 			$$.bval = true;
+			fprintf(java_code,"\t\ticonst_1\n");
 		} |
 		FALSE{
 			Trace("Reducing to bool_exp\n");
 			$$.token_type = T_BOOL;
 			$$.bval = false;
+			fprintf(java_code,"\t\ticonst_0\n");
 		} |
 		LOGICAL_NOT exp{
 			Trace("Reducing to bool_exp not\n");
@@ -476,6 +571,8 @@ bool_exp:
 		;
 string_exp:			
 		STRING{																		//for string
+			$$.token_type = T_STR;
+			strcpy($$.sval,$1.sval);
 			Trace("Reducing to string_exp\n");
 		}
 		;

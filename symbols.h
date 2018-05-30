@@ -26,12 +26,12 @@ typedef struct varentry{
 	string name;
 	int type;
 	bool isInit;
-	bool isconst;
+	bool isconst;    //1 const,0 variable
 	bool isArr;
 	bool isfunc;
 	int arrSize;
 	int javaStack_index;
-	int global;
+	int global;      //1 global,0 local
 	union{
 		varData data;
 	};

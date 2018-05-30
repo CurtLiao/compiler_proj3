@@ -7,10 +7,12 @@ fn main() {
     // variables
     let mut n:int = 8;
     let mut Fn = 1;
+    let a = 10;
+    let mut b:bool=true;
+    let mut c = false;
     
     //let mut temp:int;
-    
-    Fn = 2;
+    Fn = n - 2*2 - 1;
     FNminus1 = 3;
     
     // compute the nth Fibonacci number
@@ -23,5 +25,5 @@ fn main() {
     
     // print result
     print "Result of computation: ";
-    println n;
+    println "Result of computation: ";
 }

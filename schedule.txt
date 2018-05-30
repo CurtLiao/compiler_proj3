@@ -1,0 +1,7 @@
+variable & const declare
+var & const assign
+print
+println
+string_exp
+bool true&false
+integer_exp

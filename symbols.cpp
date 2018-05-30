@@ -2,6 +2,7 @@
 #include<stdlib.h>
 #include<stdio.h>
 #include<vector>
+#include<string.h>
 
 using namespace std;
 
@@ -15,9 +16,11 @@ varentry varNormal(string name, int type, bool isconst,int isg){
 	v.isInit = true;
 	v.isfunc = false;
 	v.arrSize = 1;
-	v.javaStack_index = stackCount;
-	v.global = isg;
-	stackCount++;
+	v.global = isg;  
+	if(isg != 1){
+		v.javaStack_index = stackCount;
+		stackCount++;
+	}
 	if(type == T_STR){
 		v.data.sval = new char[1];
 		v.data.sval[0] = '0';
@@ -34,8 +37,10 @@ varentry varNormal_n(string name, int type, bool isconst,int isg){
 	v.isfunc = false;
 	v.arrSize = 1;
 	v.global = isg;
-	v.javaStack_index = stackCount;
-	stackCount++;
+	if(isg != 1){
+		v.javaStack_index = stackCount;
+		stackCount++;
+	}
 	if(type == T_STR){
 		v.data.sval = new char[1];
 		v.data.sval[0] = '0';
@@ -240,6 +245,7 @@ varentry SymbolTables::lookup(string name){
 	}
 	varentry notexist;
 	notexist.type = T_WRONG;
+	notexist.name = " ";
 	return notexist;
 }
 
