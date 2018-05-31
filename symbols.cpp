@@ -47,6 +47,21 @@ varentry varNormal_n(string name, int type, bool isconst,int isg){
 	}
 	return v;
 }
+varentry argu(string name, int type,int isg){
+	varentry v;
+	v.name = name;
+	v.type = type;
+	v.isArr = false;
+	v.isInit = false;
+	v.isfunc = false;
+	v.arrSize = 1;
+	v.global = 0;
+	if(isg != 1){
+		v.javaStack_index = stackCount;
+		stackCount++;
+	}
+	return v;
+}
 varentry varArr(string name, int type, bool isconst, int arrSize){
 	varentry v;
 	v.name = name;
@@ -193,6 +208,7 @@ int SymbolTables::dumpTable(){
 		}
 	}
 	cout<<"------------------------------------------"<<endl;
+	stackCount = 0;
 }
 
 int SymbolTables::addvar(varentry var){
@@ -258,4 +274,10 @@ varentry SymbolTables::lookupscope(string name){
 	varentry notexist;
 	notexist.type = T_WRONG;
 	return notexist;
+}
+varentry SymbolTables::lookupargu(){
+	for(int i=0;i<Table.back().varentrys.size();i++){
+		varentry v = Table.back().varentrys[i];
+			return v;
+	}
 }

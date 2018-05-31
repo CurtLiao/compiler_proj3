@@ -1,48 +1,46 @@
 class proj3
 {
-		sipush 1
-	field static int FNminus1 = 1
-		sipush 8
-		istore 0
-		sipush 1
-		istore 1
+		sipush 5
+	field static int c = 5
+		sipush 5
+	field static int a = 5
+	method public static void add(int,int)
+	max_stack 15
+	max_locals 15
+	{
+		iload 1
 		iload 0
-		sipush 1
 		iadd
-		istore 1
-		sipush 3
-		putstatic int proj3.FNminus1
-	L0:
-		iload 0
-		sipush 2
+	
+return
+	}
+	method public static void main(java.lang.String[])
+	max_stack 15
+	max_locals 15
+	{
+		getstatic int proj3.c
+		sipush 10
 		isub
-		ifgt L1
+		ifgt L0
 		iconst_0
-		goto L2
-	L1:
+		goto L1
+	L0:
 		icnost_1
+	L1:
+		ifeq L2
+		getstatic java.io.PrintStream java.lang.System.out
+		getstatic int proj3.c
+		ineg
+		invokevirtual void java.io.PrintStream.println(int)
+	goto L3
 	L2:
-		ifeq L3
-		iload 1
-		istore 3
-		iload 1
-		getstatic int proj3.FNminus1
-		iadd
-		istore 1
-		iload 3
-		putstatic int proj3.FNminus1
-		iload 0
-		sipush 1
-		isub
-		istore 0
-		goto L0
+		getstatic java.io.PrintStream java.lang.System.out
+		getstatic int proj3.c
+		invokevirtual void java.io.PrintStream.println(int)
 	L3:
 		getstatic java.io.PrintStream java.lang.System.out
-		ldc "Result of computation: "
+		ldc "Hello World"
 		invokevirtual void java.io.PrintStream.println(java.lang.String)
-		goto L0
-	L0:
-		getstatic java.io.PrintStream java.lang.System.out
-		ldc "Result of computation: "
-		invokevirtual void java.io.PrintStream.println(java.lang.String)
+		return
+	}
 }

@@ -7,3 +7,9 @@ bool true&false
 integer_exp
 if&while
 bool_exp
+function declare
+function retrun
+
+
+
+-function_invoke

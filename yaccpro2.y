@@ -23,6 +23,9 @@ int islocal = 0;
 int lstack[50];
 int lstack_top = 1;
 int lstack_c = 0;
+int functypeinyacc;                             //7 means no type 
+int formaularg_c=0;                             //7 means no argu
+int argu_count=0;                               //count the argument
 %}
 
 %union									//def struct for value passing
@@ -60,7 +63,7 @@ int lstack_c = 0;
 %token BOOL
 %token FLOAT
 
-%type<Token> exp arr_declared type interger_exp real_exp string_exp bool_exp func_invoke     //def grammar type for return
+%type<Token> exp arr_declared type interger_exp real_exp string_exp bool_exp func_invoke func_type     //def grammar type for return
 
 
 
@@ -103,7 +106,8 @@ func_declared:
 			func_dec{Trace("Reducing to func_declared\n");} |									//from function declare reduce	
 			func_dec func_declared{Trace("Reducing to func_declared\n");}
 			;
-func_dec:																		
+func_dec:	
+
 			FN IDENTIFIER LEFT_PARENT { 													//declare function with formal_argu or not, and put function name into symbol table
 										Trace("Reducing to func_dec\n");
 										varentry v = func($2.sval,T_NO);
@@ -111,41 +115,167 @@ func_dec:
 											yyerror("Error: redefined");
 										} 
 										symt.pushStack($2.sval);
+										islocal = 1;
 			}
-			formal_argu RIGHT_PARENT func_type
-			func_scope	{ 
+			formal_argu RIGHT_PARENT 
+			func_type{
+				if($7.token_type==T_INT)
+					if(formaularg_c==7){
+							fprintf(java_code,"\tmethod public static int %s()\n",$2.sval);
+							fprintf(java_code,"\tmax_stack 15\n");
+							fprintf(java_code,"\tmax_locals 15\n");
+							fprintf(java_code,"\t{\n");
+					}
+					else{
+						fprintf(java_code,"\tmethod public static int %s(",$2.sval);
+						for(int i=0;i<argu_count;i++){
+							varentry vargu = symt.lookupargu();
+							printf("vargu = %s",vargu.name);
+							if(vargu.type==T_INT)
+								fprintf(java_code,"int");
+							else if(vargu.type==T_BOOL)
+								fprintf(java_code,"bool");
+							if(i!=argu_count-1)
+								fprintf(java_code,",");
+							else
+								fprintf(java_code,")\n");
+						}
+						fprintf(java_code,"\tmax_stack 15\n");
+						fprintf(java_code,"\tmax_locals 15\n");
+						fprintf(java_code,"\t{\n");
+						argu_count = 0;
+					}
+				else if($7.token_type==T_BOOL)
+					if(formaularg_c==7){
+							fprintf(java_code,"\tmethod public static int %s()\n",$2.sval);
+							fprintf(java_code,"\tmax_stack 15\n");
+							fprintf(java_code,"\tmax_locals 15\n");
+							fprintf(java_code,"\t{\n");
+					}
+					else{
+						fprintf(java_code,"\tmethod public static int %s(",$2.sval);
+						for(int i=0;i<argu_count;i++){
+							varentry vargu = symt.lookupargu();
+							printf("vargu = %s",vargu.name);
+							if(vargu.type==T_INT)
+								fprintf(java_code,"int");
+							else if(vargu.type==T_BOOL)
+								fprintf(java_code,"bool");
+							if(i!=argu_count-1)
+								fprintf(java_code,",");
+							else
+								fprintf(java_code,")\n");
+						}
+						fprintf(java_code,"\tmax_stack 15\n");
+						fprintf(java_code,"\tmax_locals 15\n");
+						fprintf(java_code,"\t{\n");
+						argu_count = 0;
+					}
+				else if($7.token_type ==7){                                             //functypeinyacc=7 means no type
+					if(strcmp($2.sval,"main")==0){
+						fprintf(java_code,"\tmethod public static void main(java.lang.String[])\n");
+						fprintf(java_code,"\tmax_stack 15\n");
+						fprintf(java_code,"\tmax_locals 15\n");
+						fprintf(java_code,"\t{\n");
+					}
+					else{
+						if(formaularg_c==7){
+							fprintf(java_code,"\tmethod public static void %s()\n",$2.sval);
+							fprintf(java_code,"\tmax_stack 15\n");
+							fprintf(java_code,"\tmax_locals 15\n");
+							fprintf(java_code,"\t{\n");
+						}
+						else{
+							fprintf(java_code,"\tmethod public static void %s(",$2.sval);
+							for(int i=0;i<argu_count;i++){
+								varentry vargu = symt.lookupargu();
+								printf("vargu = %s",vargu.name);
+								if(vargu.type==T_INT)
+									fprintf(java_code,"int");
+								else if(vargu.type==T_BOOL)
+									fprintf(java_code,"bool");
+								if(i!=argu_count-1)
+									fprintf(java_code,",");
+								else
+									fprintf(java_code,")\n");
+							}
+							fprintf(java_code,"\tmax_stack 15\n");
+							fprintf(java_code,"\tmax_locals 15\n");
+							fprintf(java_code,"\t{\n");
+							argu_count = 0;
+						}
+					}
+				}
+
+
+				
+			}
+			func_block	{ 
 				Trace("Reducing to func_dec\n");
 				symt.popStack(); 
 			}
+
 			;
-func_scope:																
-		LEFT_BRACE content RIGHT_BRACE{																//declare code that write in the function
-			Trace("Reducing to func scope\n");
+func_block:																
+		block return SEMICOLON RIGHT_BRACE{
+			islocal = 0;
+			Trace("Reducing to func_block\n");
+		} |
+		block RIGHT_BRACE{
+			islocal=0;
+			fprintf(java_code,"\t\treturn\n\t}\n");
+			Trace("Reducing to func_block\n");
+		}
+		;
+return:
+		RETURN exp{
+			if(functypeinyacc!=7)
+				fprintf(java_code,"\n\t\tireturn\n\t}\n");
+			else
+				fprintf(java_code,"\n\t\treturn\n\t}\n");
+			functypeinyacc = 0;
+			Trace("Reducing to return\n");
+		
+		} |
+		RETURN{
+			if(functypeinyacc!=7)
+				fprintf(java_code,"\n\t\tireturn\n\t}\n");
+			else
+				fprintf(java_code,"\n\t\treturn\n\t}\n");
+			functypeinyacc = 0;
+			Trace("Reducing to return\n");
 		}
 		;
 func_type:																	
-		MINUS LARGER type{													//def function type and return to symbol table
+		MINUS LARGER type{
+			functypeinyacc = $3.token_type;
+			$$.token_type = $3.token_type;						//def function type and return to symbol table
 			Trace("Reducing to func type -> type\n");
 			symt.funcIn($3.token_type);
 		} |
 		%empty{
+			functypeinyacc = 7;
+			$$.token_type = 7;
 			Trace("Reducing to func type nothing\n");
 		}
 		;
 formal_argu:																
-		%empty{																		//some argument in function, return its name,type,is initial or not
+		%empty{                                                                           //some argument in function, return its name,type,is initial or not
+			formaularg_c==7;																		
 			Trace("Reducing to formal argu\n");
 		} |
 		IDENTIFIER COLON type COMMA formal_argu{
+			argu_count+=1;
 			Trace("Reducing to formal argu\n");
-			varentry v = varNormal($1.sval,$3.token_type,false,symt.isGlobal());
+			varentry v = argu($1.sval,$3.token_type,symt.isGlobal());
 			if(!symt.addvar(v)){
 				yyerror("Error: redefined");
 			}
 		} |
 		IDENTIFIER COLON type{
 			Trace("Reducing to formal argu 1\n");
-			varentry v = varNormal($1.sval,$3.token_type,false,symt.isGlobal());
+			argu_count+=1;
+			varentry v = argu($1.sval,$3.token_type,symt.isGlobal());
 			if(!symt.addvar(v)){
 				yyerror("Error: redefined");
 			}
@@ -383,15 +513,6 @@ statement:
 				fprintf(java_code,"\t\tinvokevirtual void java.io.PrintStream.println(java.lang.String)\n");
 			
 			Trace("Reducing to statement println\n");	
-		} |
-		RETURN exp SEMICOLON{
-			Trace("Reducing to statement return\n");
-		} |
-		RETURN SEMICOLON{
-			Trace("Reducing to statement return\n");
-		} |
-		block{
-			Trace("Reducing to statement\n");
 		} |
 		conditional{
 			Trace("Reducing to statement conditional\n");

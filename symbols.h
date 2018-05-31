@@ -10,6 +10,7 @@ using namespace std;
 enum TYPE{
 	T_NO,T_BOOL,T_STR,T_INT,T_FLOAT,T_WRONG
 };
+
 typedef union{
 	int ival;
 	float fval;
@@ -32,6 +33,7 @@ typedef struct varentry{
 	int arrSize;
 	int javaStack_index;
 	int global;      //1 global,0 local
+	
 	union{
 		varData data;
 	};
@@ -39,8 +41,9 @@ typedef struct varentry{
 
 varentry varNormal(string name, int type, bool isconst,int isg);
 varentry varNormal_n(string name, int type, bool isconst,int isg);
+varentry func(string name, int type);
 varentry varArr(string name, int type, bool isconst, int arrSize);
-varentry func(string name,int type);
+varentry argu(string name,int type,int isg);
 
 typedef struct{
 	string scopeName;
@@ -63,7 +66,8 @@ public:
 	int revVar(varentry var);
 	int funcIn(int type);
 	int isGlobal();
-
+	
+	varentry lookupargu();
 	varentry lookup(string name);
 	varentry lookupscope(string name);
 	
