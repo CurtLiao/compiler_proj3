@@ -5,3 +5,5 @@ println
 string_exp
 bool true&false
 integer_exp
+if&while
+bool_exp

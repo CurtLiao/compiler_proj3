@@ -8,20 +8,20 @@ fn main() {
     let mut n:int = 8;
     let mut Fn = 1;
     let a = 10;
-    let mut b:bool=true;
-    let mut c = false;
+    //let mut b:bool=true;
+    //let mut c = false;
     
-    //let mut temp:int;
-    Fn = n - 2*2 - 1;
+    let mut temp:int;
+    Fn = n + 1 ;
     FNminus1 = 3;
     
     // compute the nth Fibonacci number
-    /*while (n > 2) {
+    while (n > 2) {
       temp = Fn;
       Fn = Fn + FNminus1;
       FNminus1 = temp;
       n = n - 1;
-    }*/
+    }
     
     // print result
     print "Result of computation: ";

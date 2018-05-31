@@ -20,6 +20,9 @@ SymbolTables symt = SymbolTables();      //create symbol_table
 
 int isconst = 0;
 int islocal = 0;
+int lstack[50];
+int lstack_top = 1;
+int lstack_c = 0;
 %}
 
 %union									//def struct for value passing
@@ -135,17 +138,17 @@ formal_argu:
 		} |
 		IDENTIFIER COLON type COMMA formal_argu{
 			Trace("Reducing to formal argu\n");
-			//varentry v = varNormal($1.sval,$3.token_type,false);
-			/*if(!symt.addvar(v)){
+			varentry v = varNormal($1.sval,$3.token_type,false,symt.isGlobal());
+			if(!symt.addvar(v)){
 				yyerror("Error: redefined");
-			}*/
+			}
 		} |
 		IDENTIFIER COLON type{
 			Trace("Reducing to formal argu 1\n");
-			//varentry v = varNormal($1.sval,$3.token_type,false);
-			/*if(!symt.addvar(v)){
+			varentry v = varNormal($1.sval,$3.token_type,false,symt.isGlobal());
+			if(!symt.addvar(v)){
 				yyerror("Error: redefined");
-			}*/
+			}
 		}
 		;
 
@@ -390,7 +393,7 @@ statement:
 		block{
 			Trace("Reducing to statement\n");
 		} |
-		conditionl{
+		conditional{
 			Trace("Reducing to statement conditional\n");
 		} |
 		loop{
@@ -545,27 +548,244 @@ bool_exp:
 			Trace("Reducing to bool_exp not\n");
 		} |
 		exp LESS exp{
+			$$.token_type = T_BOOL;
+			if($1.token_type==T_INT&&$3.token_type==T_INT){
+				if($1.ival<$3.ival)
+					$$.bval=true;
+				else
+					$$.bval=false;
+				fprintf(java_code,"\t\tisub\n");
+				fprintf(java_code,"\t\tiflt L%d\n",lstack_c);
+				fprintf(java_code,"\t\ticonst_0\n");
+				fprintf(java_code,"\t\tgoto L%d\n",lstack_c+1);
+				fprintf(java_code,"\tL%d:\n\t\ticnost_1\n",lstack_c);
+				fprintf(java_code,"\tL%d:\n",lstack_c+1);
+				lstack_c+=2;
+			}
+			else if($1.token_type==T_BOOL&&$3.token_type==T_BOOL){
+				if($1.bval<$3.bval)
+					$$.bval=true;
+				else
+					$$.bval=false;
+				fprintf(java_code,"\t\tisub\n");
+				fprintf(java_code,"\t\tiflt L%d\n",lstack_c);
+				fprintf(java_code,"\t\ticonst_0\n");
+				fprintf(java_code,"\t\tgoto L%d\n",lstack_c+1);
+				fprintf(java_code,"\tL%d:\n\t\ticnost_1\n",lstack_c);
+				fprintf(java_code,"\tL%d:\n",lstack_c+1);
+				lstack_c+=2;
+			}
+			else
+				yyerror("eq exp type error");
 			Trace("Reducing to bool_exp less\n");
 		} |
 		exp LARGER exp{
+			$$.token_type = T_BOOL;
+			if($1.token_type==T_INT&&$3.token_type==T_INT){
+				if($1.ival>$3.ival)
+					$$.bval=true;
+				else
+					$$.bval=false;
+				fprintf(java_code,"\t\tisub\n");
+				fprintf(java_code,"\t\tifgt L%d\n",lstack_c);
+				fprintf(java_code,"\t\ticonst_0\n");
+				fprintf(java_code,"\t\tgoto L%d\n",lstack_c+1);
+				fprintf(java_code,"\tL%d:\n\t\ticnost_1\n",lstack_c);
+				fprintf(java_code,"\tL%d:\n",lstack_c+1);
+				lstack_c+=2;
+			}
+			else if($1.token_type==T_BOOL&&$3.token_type==T_BOOL){
+				if($1.bval>$3.bval)
+					$$.bval=true;
+				else
+					$$.bval=false;
+				fprintf(java_code,"\t\tisub\n");
+				fprintf(java_code,"\t\tifgt L%d\n",lstack_c);
+				fprintf(java_code,"\t\ticonst_0\n");
+				fprintf(java_code,"\t\tgoto L%d\n",lstack_c+1);
+				fprintf(java_code,"\tL%d:\n\t\ticnost_1\n",lstack_c);
+				fprintf(java_code,"\tL%d:\n",lstack_c+1);
+				lstack_c+=2;
+			}
+			else
+				yyerror("eq exp type error");
 			Trace("Reducing to bool_exp larger\n");
 		} |
 		exp LOGICAL_AND exp{
+			$$.token_type = T_BOOL;
+			if($1.token_type==T_INT&&$3.token_type==T_INT){
+				if($1.ival&&$3.ival)
+					$$.bval = true;
+				else
+					$$.bval = false;
+				fprintf(java_code,"\t\tiand\n");
+			}
+			else if($1.token_type==T_BOOL&&$3.token_type==T_BOOL){
+				if($1.bval&&$3.bval)
+					$$.bval = true;
+				else
+					$$.bval = false;
+				fprintf(java_code,"\t\tiand\n");
+			}
 			Trace("Reducing to bool_exp and\n");
 		} |
 		exp LOGICAL_OR exp{
+			$$.token_type = T_BOOL;
+			if($1.token_type==T_INT&&$3.token_type==T_INT){
+				if($1.ival||$3.ival)
+					$$.bval = true;
+				else
+					$$.bval = false;
+				fprintf(java_code,"\t\tior\n");
+			}
+			else if($1.token_type==T_BOOL&&$3.token_type==T_BOOL){
+				if($1.bval||$3.bval)
+					$$.bval = true;
+				else
+					$$.bval = false;
+				fprintf(java_code,"\t\tior\n");
+			}
 			Trace("Reducing to bool_exp or\n");
 		} |
-		exp LOGICAL_NOT exp{
+		LOGICAL_NOT exp{
+			if($2.token_type!=T_BOOL)
+				yyerror("not exp wrong type");
+			else{
+				$$.token_type = T_BOOL;
+				if(!$2.bval)
+					$$.bval = true;
+				else
+					$$.bval = false;
+			}
+			fprintf(java_code,"\t\tixor\n");
 			Trace("Reducing to bool_exp not\n");
 		} |
 		exp LARGEREQ exp{
+			$$.token_type = T_BOOL;
+			if($1.token_type==T_INT&&$3.token_type==T_INT){
+				if($1.ival>=$3.ival)
+					$$.bval=true;
+				else
+					$$.bval=false;
+				fprintf(java_code,"\t\tisub\n");
+				fprintf(java_code,"\t\tifge L%d\n",lstack_c);
+				fprintf(java_code,"\t\ticonst_0\n");
+				fprintf(java_code,"\t\tgoto L%d\n",lstack_c+1);
+				fprintf(java_code,"\tL%d:\n\t\ticnost_1\n",lstack_c);
+				fprintf(java_code,"\tL%d:\n",lstack_c+1);
+				lstack_c+=2;
+			}
+			else if($1.token_type==T_BOOL&&$3.token_type==T_BOOL){
+				if($1.bval>=$3.bval)
+					$$.bval=true;
+				else
+					$$.bval=false;
+				fprintf(java_code,"\t\tisub\n");
+				fprintf(java_code,"\t\tifge L%d\n",lstack_c);
+				fprintf(java_code,"\t\ticonst_0\n");
+				fprintf(java_code,"\t\tgoto L%d\n",lstack_c+1);
+				fprintf(java_code,"\tL%d:\n\t\ticnost_1\n",lstack_c);
+				fprintf(java_code,"\tL%d:\n",lstack_c+1);
+				lstack_c+=2;
+			}
+			else
+				yyerror("eq exp type error");
 			Trace("Reducing to bool_exp larger eq\n");
 		} |
 		exp LESSEQ exp{
+			$$.token_type = T_BOOL;
+			if($1.token_type==T_INT&&$3.token_type==T_INT){
+				if($1.ival<=$3.ival)
+					$$.bval=true;
+				else
+					$$.bval=false;
+				fprintf(java_code,"\t\tisub\n");
+				fprintf(java_code,"\t\tifle L%d\n",lstack_c);
+				fprintf(java_code,"\t\ticonst_0\n");
+				fprintf(java_code,"\t\tgoto L%d\n",lstack_c+1);
+				fprintf(java_code,"\tL%d:\n\t\ticnost_1\n",lstack_c);
+				fprintf(java_code,"\tL%d:\n",lstack_c+1);
+				lstack_c+=2;
+			}
+			else if($1.token_type==T_BOOL&&$3.token_type==T_BOOL){
+				if($1.bval<=$3.bval)
+					$$.bval=true;
+				else
+					$$.bval=false;
+				fprintf(java_code,"\t\tisub\n");
+				fprintf(java_code,"\t\tifle L%d\n",lstack_c);
+				fprintf(java_code,"\t\ticonst_0\n");
+				fprintf(java_code,"\t\tgoto L%d\n",lstack_c+1);
+				fprintf(java_code,"\tL%d:\n\t\ticnost_1\n",lstack_c);
+				fprintf(java_code,"\tL%d:\n",lstack_c+1);
+				lstack_c+=2;
+			}
+			else
+				yyerror("eq exp type error");
 			Trace("Reducing to  less eq\n");
 		} |
 		exp NOTEQ exp{
+			$$.token_type = T_BOOL;
+			if($1.token_type==T_INT&&$3.token_type==T_INT){
+				if($1.ival!=$3.ival)
+					$$.bval=true;
+				else
+					$$.bval=false;
+				fprintf(java_code,"\t\tisub\n");
+				fprintf(java_code,"\t\tifne L%d\n",lstack_c);
+				fprintf(java_code,"\t\ticonst_0\n");
+				fprintf(java_code,"\t\tgoto L%d\n",lstack_c+1);
+				fprintf(java_code,"\tL%d:\n\t\ticnost_1\n",lstack_c);
+				fprintf(java_code,"\tL%d:\n",lstack_c+1);
+				lstack_c+=2;
+			}
+			else if($1.token_type==T_BOOL&&$3.token_type==T_BOOL){
+				if($1.bval!=$3.bval)
+					$$.bval=true;
+				else
+					$$.bval=false;
+				fprintf(java_code,"\t\tisub\n");
+				fprintf(java_code,"\t\tifne L%d\n",lstack_c);
+				fprintf(java_code,"\t\ticonst_0\n");
+				fprintf(java_code,"\t\tgoto L%d\n",lstack_c+1);
+				fprintf(java_code,"\tL%d:\n\t\ticnost_1\n",lstack_c);
+				fprintf(java_code,"\tL%d:\n",lstack_c+1);
+				lstack_c+=2;
+			}
+			else
+				yyerror("eq exp type error");
+			Trace("Reducing to bool_exp not eq\n");
+		} |
+		exp EQ exp{
+			$$.token_type = T_BOOL;
+			if($1.token_type==T_INT&&$3.token_type==T_INT){
+				if($1.ival==$3.ival)
+					$$.bval=true;
+				else
+					$$.bval=false;
+				fprintf(java_code,"\t\tisub\n");
+				fprintf(java_code,"\t\tifeq L%d\n",lstack_c);
+				fprintf(java_code,"\t\ticonst_0\n");
+				fprintf(java_code,"\t\tgoto L%d\n",lstack_c+1);
+				fprintf(java_code,"\tL%d:\n\t\ticnost_1\n",lstack_c);
+				fprintf(java_code,"\tL%d:\n",lstack_c+1);
+				lstack_c+=2;
+			}
+			else if($1.token_type==T_BOOL&&$3.token_type==T_BOOL){
+				if($1.bval==$3.bval)
+					$$.bval=true;
+				else
+					$$.bval=false;
+				fprintf(java_code,"\t\tisub\n");
+				fprintf(java_code,"\t\tifeq L%d\n",lstack_c);
+				fprintf(java_code,"\t\ticonst_0\n");
+				fprintf(java_code,"\t\tgoto L%d\n",lstack_c+1);
+				fprintf(java_code,"\tL%d:\n\t\ticnost_1\n",lstack_c);
+				fprintf(java_code,"\tL%d:\n",lstack_c+1);
+				lstack_c+=2;
+			}
+			else
+				yyerror("eq exp type error");
 			Trace("Reducing to bool_exp not eq\n");
 		} 
 		;
@@ -595,25 +815,87 @@ block:
 				Trace("Reducing to block\n");
 				symt.pushStack("nowScope");
 	 			} 
-	 content RIGHT_BRACE{
-				Trace("Reducing to block\n");
+	 content{
+				Trace("Reducing to block content\n");
 				symt.popStack();
 	 }
 	 ;
-conditionl:
-	IF LEFT_PARENT bool_exp RIGHT_PARENT block{												//if else
-		Trace("Reducing to conditionl\n");
+conditional:
+	IF LEFT_PARENT bool_exp RIGHT_PARENT {
+		lstack[lstack_top++] = lstack_c;
+		fprintf(java_code,"\t\tifeq L%d\n",lstack_c);
+		lstack_c+=2;
+		Trace("Reducing to conditional\n");
 	}
-	|
-	IF LEFT_PARENT bool_exp RIGHT_PARENT block ELSE block{
-		Trace("Reducing to conditionl\n");
+	else_state {
+		Trace("Reducing to else conditional\n");
 	}
 	;
+else_state: 
+	block RIGHT_BRACE {
+		fprintf(java_code,"\tL%d:\n",lstack[--lstack_top]+1);
+	} |
+	statement{
+		fprintf(java_code,"\tL%d:\n",lstack[--lstack_top]+1);
+	} |
+	block RIGHT_BRACE ELSE{
+			fprintf(java_code,"\tgoto L%d\n",lstack[lstack_top-1]+1);
+			fprintf(java_code,"\tL%d:\n",lstack[lstack_top-1]);
+			}
+	block RIGHT_BRACE{
+		fprintf(java_code,"\tL%d:\n",lstack[--lstack_top]+1);
+	} |
+	statement ELSE{
+			fprintf(java_code,"\t\tgoto L%d\n",lstack[lstack_top-1]+1);  // go outside
+			fprintf(java_code,"\tL%d:\n",lstack[lstack_top-1]);
+			}
+	block RIGHT_BRACE{
+		fprintf(java_code,"\tL%d:\n",lstack[--lstack_top]+1);
+	} |
+	block RIGHT_BRACE ELSE{
+			fprintf(java_code,"\t\tgoto L%d\n",lstack[lstack_top-1]+1);  // go outside
+			fprintf(java_code,"\tL%d:\n",lstack[lstack_top-1]);
+			}
+	statement{
+		fprintf(java_code,"\tL:%d:\n",lstack[--lstack_top]+1);
+	} |
+	statement ELSE{
+			fprintf(java_code,"\t\tgoto L%d\n",lstack[lstack_top-1]+1);  // go outside
+			fprintf(java_code,"\tL%d:\n",lstack[lstack_top-1]);
+			}
+	statement{
+		fprintf(java_code,"\tL%d:\n",lstack[--lstack_top]+1);
+	}
+		
+
 loop:
-	WHILE LEFT_PARENT bool_exp RIGHT_PARENT block{									//while loop
-		Trace("Reducing to loop\n");
-	}
+	WHILE{
+			fprintf(java_code,"\tL%d:\n",lstack_c);
+			lstack[lstack_top++] = lstack_c;
+			lstack_c++;
+		}
+		LEFT_PARENT bool_exp RIGHT_PARENT{
+			fprintf(java_code,"\t\tifeq L%d\n",lstack_c);
+			lstack[lstack_top++] = lstack_c;
+			lstack_c++;
+		}
+		loop_content{
+			Trace("Reducing to loop\n");
+		}
 	;
+loop_content:
+	block RIGHT_BRACE{
+		fprintf(java_code,"\t\tgoto L%d\n",lstack[lstack_top-2]);
+		fprintf(java_code,"\tL%d:\n",lstack[--lstack_top]);
+		lstack_top--;
+		Trace("Reducing to loop content\n");
+	}
+	statement{
+		fprintf(java_code,"\t\tgoto L%d\n",lstack[lstack_top-2]);
+		fprintf(java_code,"\tL%d:\n",lstack[--lstack_top]);
+		lstack_top--;
+		Trace("Reducing to loop content statement\n");
+	}
 type:						
 		BOOL{																	//for type, def int,float ,bool,string
 			Trace("Reducing to type bool\n");
