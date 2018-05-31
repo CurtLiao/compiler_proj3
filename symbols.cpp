@@ -4,6 +4,7 @@
 #include<vector>
 #include<string.h>
 
+
 using namespace std;
 
 int stackCount = 0;
@@ -89,6 +90,8 @@ varentry func(string name,int type){
 	v.isconst = false;
 	v.isfunc = true;
 	v.arrSize = 1;
+	
+	
 	if(type == T_STR){
 		v.data.sval = new char[1];
 		v.data.sval[0] = '0';

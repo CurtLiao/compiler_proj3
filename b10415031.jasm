@@ -1,24 +1,28 @@
 class proj3
 {
 		sipush 5
-	field static int c = 5
-		sipush 5
 	field static int a = 5
-	method public static void add(int,int)
+	method public static int add(int,int)
 	max_stack 15
 	max_locals 15
 	{
 		iload 1
 		iload 0
 		iadd
-	
-return
+
+		ireturn
 	}
 	method public static void main(java.lang.String[])
 	max_stack 15
 	max_locals 15
 	{
-		getstatic int proj3.c
+		sipush 5
+		istore 0
+		getstatic int proj3.a
+		sipush 10
+		invokestatic bool proj3.add((null)
+		istore 2
+		iload 2
 		sipush 10
 		isub
 		ifgt L0
@@ -29,13 +33,13 @@ return
 	L1:
 		ifeq L2
 		getstatic java.io.PrintStream java.lang.System.out
-		getstatic int proj3.c
+		iload 2
 		ineg
 		invokevirtual void java.io.PrintStream.println(int)
 	goto L3
 	L2:
 		getstatic java.io.PrintStream java.lang.System.out
-		getstatic int proj3.c
+		iload 2
 		invokevirtual void java.io.PrintStream.println(int)
 	L3:
 		getstatic java.io.PrintStream java.lang.System.out

@@ -3,7 +3,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<iostream>
-#include<string>
+#include<string.h>
 #include<vector>
 using namespace std;
 
@@ -16,6 +16,7 @@ typedef union{
 	float fval;
 	bool bval;
 	char *sval;
+	char *fun;
 
 	int* inArr;
 	float* flArr;
@@ -33,7 +34,7 @@ typedef struct varentry{
 	int arrSize;
 	int javaStack_index;
 	int global;      //1 global,0 local
-	
+	string funcC;
 	union{
 		varData data;
 	};
@@ -44,6 +45,7 @@ varentry varNormal_n(string name, int type, bool isconst,int isg);
 varentry func(string name, int type);
 varentry varArr(string name, int type, bool isconst, int arrSize);
 varentry argu(string name,int type,int isg);
+
 
 typedef struct{
 	string scopeName;
@@ -68,6 +70,7 @@ public:
 	int isGlobal();
 	
 	varentry lookupargu();
+	//varentry lookupfunc();
 	varentry lookup(string name);
 	varentry lookupscope(string name);
 	

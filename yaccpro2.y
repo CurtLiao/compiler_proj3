@@ -1,5 +1,6 @@
 %{  
 #define Trace(t)        printf(t)
+#define MAX_LENG 256
 //#define Trace(t)
 #include <stdlib.h>
 #include <stdio.h>
@@ -8,6 +9,7 @@
 #include<iostream>
 #include<vector>
 #include<string.h>
+
 FILE *java_code;
 
 extern "C" {							 //use C++
@@ -26,6 +28,8 @@ int lstack_c = 0;
 int functypeinyacc;                             //7 means no type 
 int formaularg_c=0;                             //7 means no argu
 int argu_count=0;                               //count the argument
+string funccontent;
+char ff[MAX_LENG];                             
 %}
 
 %union									//def struct for value passing
@@ -125,51 +129,81 @@ func_dec:
 							fprintf(java_code,"\tmax_stack 15\n");
 							fprintf(java_code,"\tmax_locals 15\n");
 							fprintf(java_code,"\t{\n");
+							
+						
 					}
 					else{
 						fprintf(java_code,"\tmethod public static int %s(",$2.sval);
 						for(int i=0;i<argu_count;i++){
 							varentry vargu = symt.lookupargu();
-							printf("vargu = %s",vargu.name);
-							if(vargu.type==T_INT)
-								fprintf(java_code,"int");
-							else if(vargu.type==T_BOOL)
-								fprintf(java_code,"bool");
-							if(i!=argu_count-1)
-								fprintf(java_code,",");
-							else
-								fprintf(java_code,")\n");
-						}
+
+							if(vargu.type==T_INT){
+									fprintf(java_code,"int");
+									strcat(ff,"int");
+								}
+								else if(vargu.type==T_BOOL){
+									fprintf(java_code,"bool");
+									strcat(ff,"bool");
+								}
+								if(i!=argu_count-1){
+									fprintf(java_code,",");
+									strcat(ff,",");
+								}
+								else{
+									fprintf(java_code,")\n");
+									strcat(ff,")");
+								}
+							}
+							varentry vcheckfun = symt.lookup($2.sval);
+							if(vcheckfun.isfunc==1){
+								vcheckfun.data.fun = ff;
+							}
 						fprintf(java_code,"\tmax_stack 15\n");
 						fprintf(java_code,"\tmax_locals 15\n");
 						fprintf(java_code,"\t{\n");
 						argu_count = 0;
-					}
+						funccontent="";
+				}
 				else if($7.token_type==T_BOOL)
 					if(formaularg_c==7){
 							fprintf(java_code,"\tmethod public static int %s()\n",$2.sval);
 							fprintf(java_code,"\tmax_stack 15\n");
 							fprintf(java_code,"\tmax_locals 15\n");
 							fprintf(java_code,"\t{\n");
+						
+							
 					}
 					else{
 						fprintf(java_code,"\tmethod public static int %s(",$2.sval);
 						for(int i=0;i<argu_count;i++){
 							varentry vargu = symt.lookupargu();
-							printf("vargu = %s",vargu.name);
-							if(vargu.type==T_INT)
-								fprintf(java_code,"int");
-							else if(vargu.type==T_BOOL)
-								fprintf(java_code,"bool");
-							if(i!=argu_count-1)
-								fprintf(java_code,",");
-							else
-								fprintf(java_code,")\n");
-						}
+							
+								if(vargu.type==T_INT){
+									fprintf(java_code,"int");
+									strcat(ff,"int");
+								}
+								else if(vargu.type==T_BOOL){
+									fprintf(java_code,"bool");
+									strcat(ff,"bool");
+								}
+								if(i!=argu_count-1){
+									fprintf(java_code,",");
+									strcat(ff,",");
+								}
+								else{
+									fprintf(java_code,")\n");
+									strcat(ff,")");
+								}
+							}
+							varentry vcheckfun = symt.lookup($2.sval);
+							if(vcheckfun.isfunc==1){
+								vcheckfun.data.fun = ff;
+							}
 						fprintf(java_code,"\tmax_stack 15\n");
 						fprintf(java_code,"\tmax_locals 15\n");
 						fprintf(java_code,"\t{\n");
 						argu_count = 0;
+						funccontent = "";
 					}
 				else if($7.token_type ==7){                                             //functypeinyacc=7 means no type
 					if(strcmp($2.sval,"main")==0){
@@ -177,6 +211,8 @@ func_dec:
 						fprintf(java_code,"\tmax_stack 15\n");
 						fprintf(java_code,"\tmax_locals 15\n");
 						fprintf(java_code,"\t{\n");
+						
+						
 					}
 					else{
 						if(formaularg_c==7){
@@ -184,25 +220,40 @@ func_dec:
 							fprintf(java_code,"\tmax_stack 15\n");
 							fprintf(java_code,"\tmax_locals 15\n");
 							fprintf(java_code,"\t{\n");
+							
+							
 						}
 						else{
 							fprintf(java_code,"\tmethod public static void %s(",$2.sval);
 							for(int i=0;i<argu_count;i++){
 								varentry vargu = symt.lookupargu();
-								printf("vargu = %s",vargu.name);
-								if(vargu.type==T_INT)
+								
+								if(vargu.type==T_INT){
 									fprintf(java_code,"int");
-								else if(vargu.type==T_BOOL)
+									strcat(ff,"int");
+								}
+								else if(vargu.type==T_BOOL){
 									fprintf(java_code,"bool");
-								if(i!=argu_count-1)
+									strcat(ff,"bool");
+								}
+								if(i!=argu_count-1){
 									fprintf(java_code,",");
-								else
+									strcat(ff,",");
+								}
+								else{
 									fprintf(java_code,")\n");
+									strcat(ff,")");
+								}
+							}
+							varentry vcheckfun = symt.lookup($2.sval);
+							if(vcheckfun.isfunc==1){
+								vcheckfun.data.fun = ff;
 							}
 							fprintf(java_code,"\tmax_stack 15\n");
 							fprintf(java_code,"\tmax_locals 15\n");
 							fprintf(java_code,"\t{\n");
 							argu_count = 0;
+							funccontent = "";
 						}
 					}
 				}
@@ -281,6 +332,29 @@ formal_argu:
 			}
 		}
 		;
+func_return:
+	IDENTIFIER LEFT_PARENT func_invoke RIGHT_PARENT{
+		varentry v = symt.lookup($1.sval);
+		if(v.type==T_INT)
+			fprintf(java_code,"\t\tinvokestatic int proj3.%s(%s\n",$1.sval,v.data.fun);
+		else if(v.type==T_BOOL)
+			fprintf(java_code,"\t\tinvokestatic bool proj3.%s(%s\n",$1.sval,v.data.fun);
+		Trace("Reducing to func return\n");
+	} |
+	IDENTIFIER LEFT_PARENT RIGHT_PARENT{
+		fprintf(java_code,"\t\tinvokestatic %d proj3.%s()\n",$1.sval);
+		Trace("Reducing to func return\n");
+	}
+	;
+
+func_invoke:
+	exp COMMA func_invoke{
+		Trace("Reducing to func invoke\n");
+	} |
+	exp{
+		Trace("Reducing to func invoke\n");
+	}
+	;
 
 var_declared:																			
 		LET MUT IDENTIFIER SEMICOLON{													//variable declare, return its name type value initial or not, put into symbol table
@@ -300,6 +374,8 @@ var_declared:
 			Trace("Reducing to var_declared\n");
 			
 			varentry v = varNormal($3.sval,$5.token_type,false,symt.isGlobal());
+
+			
 			if($5.token_type==T_INT){
 
 				v.data.ival = $5.ival;
@@ -520,8 +596,20 @@ statement:
 		loop{
 			Trace("Reducing to statement loop\n");
 		} |
-		func_invoke{
-			Trace("Reducing to statement func_invoke\n");
+		IDENTIFIER ASSIGN func_return SEMICOLON{
+			varentry v = symt.lookup($1.sval);
+			if(v.type!=T_WRONG){
+				if(v.global==1){
+					if(v.type==T_INT)
+						fprintf(java_code,"\t\tputstatic int proj3.%s\n",$1.sval);
+					else if(v.type==T_BOOL)
+						fprintf(java_code,"\t\tputstatic bool proj3.%s\n",$1.sval);
+				}
+				else{
+					fprintf(java_code,"\t\tistore %d\n",v.javaStack_index);
+				}
+			}
+			Trace("Reducing to id assign func_\n");
 		}
 		;
 exp:                                                                       //for expression action include +-*/% and integer,real,string,bool
@@ -598,9 +686,6 @@ exp:                                                                       //for
 			fprintf(java_code,"\t\tldc \"%s\"\n",$1.sval);
 		$$.token_type=T_STR;
 		strcpy($$.sval,$1.sval);
-	} |
-	func_invoke{
-		Trace("Reducing to exp\n");
 	} |
 	IDENTIFIER{
 		varentry vcheck = symt.lookup($1.sval);
@@ -915,20 +1000,6 @@ string_exp:
 			$$.token_type = T_STR;
 			strcpy($$.sval,$1.sval);
 			Trace("Reducing to string_exp\n");
-		}
-		;
-func_invoke:
-		IDENTIFIER LEFT_PARENT parameters RIGHT_PARENT{											
-			Trace("Reducing to func_invoke\n");
-		}
-		;
-parameters:
-		exp COMMA parameters{							//function invoke's parameters
-			Trace("Reducing to parameter\n");
-		}
-		|
-		exp{
-			Trace("Reducing to parameter\n");
 		}
 		;
 block:												
