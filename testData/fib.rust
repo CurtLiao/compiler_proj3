@@ -2,25 +2,13 @@
  *
  * This test program computes the Nth Fibonacci number
  */
-let mut FNminus1 = 1;
-fn add(a:int,b:int)->int{
-	let mut c:int = 5;
-	c = a + b;
-	return c;
-}
+
 fn main() {
     // variables
     let mut n:int = 8;
     let mut Fn = 1;
-    let a = 10;
-    let mut b:bool = false;
-    //let mut b:bool=true;
-    //let mut c = false;
-    
+    let mut FNminus1 = 1;
     let mut temp:int;
-    Fn = n + 1 ;
-    FNminus1 = 3;
-
     
     // compute the nth Fibonacci number
     while (n > 2) {
@@ -32,5 +20,5 @@ fn main() {
     
     // print result
     print "Result of computation: ";
-    println "Result of computation: ";
+    println n;
 }

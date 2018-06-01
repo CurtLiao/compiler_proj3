@@ -3,27 +3,27 @@
  */
 
 // variables
-
+let mut c;
 let mut a = 5;
     
 // function declaration
-fn add(a:int, b:int)->int
+fn add(a:int, b:int) -> int
 {
-  return a+b;
+  let mut ff = 5;
+  return b+a;
 }
     
 // main function
 fn main() 
 {
-  let mut b = 5;
-  let f = 10;
-  let mut c:int;
+  let mut iv = 5;
+  iv = iv + 1;
   c = add(a, 10);
   if (c > 10) {
     print -c;
   }
   else {
-    print c;
+    println "abc";
   }
   println "Hello World";
 }

@@ -1,10 +1,13 @@
 #ifndef SYMBOLS_H
 #define SYMBOLS_H
+#define MAX_LEN_S 128
+
+#include<iostream>
+#include<string>
+#include<vector>
 #include<stdio.h>
 #include<stdlib.h>
-#include<iostream>
 #include<string.h>
-#include<vector>
 using namespace std;
 
 enum TYPE{
@@ -16,7 +19,7 @@ typedef union{
 	float fval;
 	bool bval;
 	char *sval;
-	char *fun;
+	char fun[MAX_LEN_S];
 
 	int* inArr;
 	float* flArr;
@@ -26,6 +29,7 @@ typedef union{
 
 typedef struct varentry{
 	string name;
+	string arguname;
 	int type;
 	bool isInit;
 	bool isconst;    //1 const,0 variable
@@ -34,7 +38,6 @@ typedef struct varentry{
 	int arrSize;
 	int javaStack_index;
 	int global;      //1 global,0 local
-	string funcC;
 	union{
 		varData data;
 	};
@@ -42,7 +45,7 @@ typedef struct varentry{
 
 varentry varNormal(string name, int type, bool isconst,int isg);
 varentry varNormal_n(string name, int type, bool isconst,int isg);
-varentry func(string name, int type);
+varentry func(string name, int type,string content);
 varentry varArr(string name, int type, bool isconst, int arrSize);
 varentry argu(string name,int type,int isg);
 
@@ -68,9 +71,10 @@ public:
 	int revVar(varentry var);
 	int funcIn(int type);
 	int isGlobal();
+	int funcAR(string content);
 	
-	varentry lookupargu();
-	//varentry lookupfunc();
+	varentry lookupargu(int a);
+	
 	varentry lookup(string name);
 	varentry lookupscope(string name);
 	

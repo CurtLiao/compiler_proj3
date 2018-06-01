@@ -1,8 +1,11 @@
-#include"symbols.h"
-#include<stdlib.h>
-#include<stdio.h>
+
+#include<iostream>
+#include<string>
 #include<vector>
+#include<stdio.h>
+#include<stdlib.h>
 #include<string.h>
+#include"symbols.h"
 
 
 using namespace std;
@@ -80,7 +83,7 @@ varentry varArr(string name, int type, bool isconst, int arrSize){
 	return v;
 }
 
-varentry func(string name,int type){
+varentry func(string name,int type,string content){
 	varentry v;
 	v.name = name;
 	v.type = type;
@@ -89,6 +92,7 @@ varentry func(string name,int type){
 	v.isInit = true;
 	v.isconst = false;
 	v.isfunc = true;
+	v.arguname = content;
 	v.arrSize = 1;
 	
 	
@@ -246,12 +250,17 @@ int SymbolTables::funcIn(int type){
 	}
 }
 
+int SymbolTables::funcAR(string content){
+	Table[Table.size()-2].varentrys.back().arguname = content;
+}
+
 int SymbolTables::isGlobal(){
 	
 	if(Table.size()==1)
 		return 1;
 	return 0;
 }
+
 
 varentry SymbolTables::lookup(string name){
 	for(int i =Table.size()-1;i>=0;i--){
@@ -278,9 +287,9 @@ varentry SymbolTables::lookupscope(string name){
 	notexist.type = T_WRONG;
 	return notexist;
 }
-varentry SymbolTables::lookupargu(){
-	for(int i=0;i<Table.back().varentrys.size();i++){
-		varentry v = Table.back().varentrys[i];
+varentry SymbolTables::lookupargu(int a){
+	
+		varentry v = Table.back().varentrys[a-1];
 			return v;
-	}
+	
 }

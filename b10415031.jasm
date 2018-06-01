@@ -1,50 +1,42 @@
 class proj3
 {
-		sipush 5
-	field static int a = 5
-	method public static int add(int,int)
-	max_stack 15
-	max_locals 15
-	{
-		iload 1
-		iload 0
-		iadd
-
-		ireturn
-	}
 	method public static void main(java.lang.String[])
 	max_stack 15
 	max_locals 15
 	{
-		sipush 5
-		istore 0
-		getstatic int proj3.a
-		sipush 10
-		invokestatic bool proj3.add((null)
+		sipush 0
+		istore 1
+		sipush 0
 		istore 2
+	L0:
 		iload 2
 		sipush 10
 		isub
-		ifgt L0
+		ifle L1
 		iconst_0
-		goto L1
-	L0:
-		icnost_1
+		goto L2
 	L1:
-		ifeq L2
-		getstatic java.io.PrintStream java.lang.System.out
-		iload 2
-		ineg
-		invokevirtual void java.io.PrintStream.println(int)
-	goto L3
+		icnost_1
 	L2:
-		getstatic java.io.PrintStream java.lang.System.out
+		ifeq L3
+		iload 1
 		iload 2
-		invokevirtual void java.io.PrintStream.println(int)
+		iadd
+		istore 1
+		iload 2
+		sipush 1
+		iadd
+		istore 2
+		goto L0
 	L3:
 		getstatic java.io.PrintStream java.lang.System.out
-		ldc "Hello World"
+		ldc "The sum is "
 		invokevirtual void java.io.PrintStream.println(java.lang.String)
+		goto L0
+	L0:
+		getstatic java.io.PrintStream java.lang.System.out
+		iload 1
+		invokevirtual void java.io.PrintStream.println(int)
 		return
 	}
 }
