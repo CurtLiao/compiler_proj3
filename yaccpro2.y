@@ -344,12 +344,23 @@ var_declared:
 		LET MUT IDENTIFIER SEMICOLON{													//variable declare, return its name type value initial or not, put into symbol table
 			Trace("Reducing to var_declared\n");										//if redefined,error
 			varentry v = varNormal_n($3.sval,T_INT,false,symt.isGlobal());
+			
+			if(symt.isGlobal()==1)
+					fprintf(java_code,"\tfield static int %s\n",$3.sval);
 			if(!symt.addvar(v))
 				yyerror("Error : redefined");
 		} |
 		LET MUT IDENTIFIER COLON type SEMICOLON{
 			Trace("Reducing to var_declared\n");
 			varentry v = varNormal_n($3.sval,$5.token_type,false,symt.isGlobal());
+			if(symt.isGlobal()==1){
+				if($5.token_type==T_INT)
+					fprintf(java_code,"\tfield static int %s\n",$3.sval);
+				else if($5.token_type==T_BOOL)
+					fprintf(java_code,"\tfield static bool %s\n",$3.sval);
+				else
+					yyerror("variable type define error");
+			}
 
 			if(!symt.addvar(v))
 				yyerror("Error : redefined");
@@ -558,9 +569,9 @@ statement:
 			fprintf(java_code,"\t\tgetstatic java.io.PrintStream java.lang.System.out\n");
 		}exp SEMICOLON{
 			if($3.token_type==T_INT||$3.token_type==T_BOOL)
-				fprintf(java_code,"\t\tinvokevirtual void java.io.PrintStream.println(int)\n");
+				fprintf(java_code,"\t\tinvokevirtual void java.io.PrintStream.print(int)\n");
 			else
-				fprintf(java_code,"\t\tinvokevirtual void java.io.PrintStream.println(java.lang.String)\n");
+				fprintf(java_code,"\t\tinvokevirtual void java.io.PrintStream.print(java.lang.String)\n");
 			Trace("Reducing to statement print\n");
 		} |
 		PRINTLN{
