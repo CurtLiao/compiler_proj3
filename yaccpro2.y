@@ -122,7 +122,9 @@ func_dec:
 										symt.pushStack($2.sval);
 										islocal = 1;
 			}
-			formal_argu{                                                                      //argument put into function id
+			formal_argu{ 
+				if(argu_count==0)
+					formaularg_c = 7;                                                                    //argument put into function id
 				varentry v = symt.lookup($2.sval);
 				int b = argu_count;
 				//fprintf(java_code,"argument b = %d\n",b);
@@ -167,7 +169,7 @@ func_dec:
 						varentry vfunc = symt.lookup($2.sval);
 						fprintf(java_code,"\tmethod public static int %s(%s\n",vfunc.name.c_str(),vfunc.arguname.c_str());
 
-						funccontent = "";
+						
 						
 						fprintf(java_code,"\tmax_stack 15\n");
 						fprintf(java_code,"\tmax_locals 15\n");
@@ -189,7 +191,7 @@ func_dec:
 						varentry vfunc = symt.lookup($2.sval);
 						fprintf(java_code,"\tmethod public static int %s(%s\n",vfunc.name.c_str(),vfunc.arguname.c_str());
 
-						funccontent = "";
+						
 						
 						fprintf(java_code,"\tmax_stack 15\n");
 						fprintf(java_code,"\tmax_locals 15\n");
@@ -220,7 +222,7 @@ func_dec:
 							varentry vfunc = symt.lookup($2.sval);
 							fprintf(java_code,"\tmethod public static void %s(%s\n",vfunc.name.c_str(),vfunc.arguname.c_str());
 
-							funccontent = "";
+							
 							
 							fprintf(java_code,"\tmax_stack 15\n");
 							fprintf(java_code,"\tmax_locals 15\n");
@@ -231,7 +233,8 @@ func_dec:
 						}
 					}
 				}
-				//symt.pushStack($2.sval); 	
+				//symt.pushStack($2.sval);
+				formaularg_c = 0; 	
 			}
 			func_block	{ 
 				Trace("Reducing to func_dec\n");

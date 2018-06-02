@@ -12,6 +12,32 @@ class proj3
 
 		ireturn
 	}
+	method public static void sub(int,int)
+	max_stack 15
+	max_locals 15
+	{
+		iload 0
+		iload 1
+		isub
+
+		return
+	}
+	method public static int mul(bool,int,bool,bool)
+	max_stack 15
+	max_locals 15
+	{
+		sipush 1
+
+		ireturn
+	}
+	method public static void div()
+	max_stack 15
+	max_locals 15
+	{
+		sipush 0
+
+		return
+	}
 	method public static void main(java.lang.String[])
 	max_stack 15
 	max_locals 15

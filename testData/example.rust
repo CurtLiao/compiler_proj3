@@ -9,6 +9,15 @@ let mut a = 5;
 fn add(a:int, b:int) -> int {
 return a+b;
 }
+fn sub(a:int, b:int){
+return a - b;
+}
+fn mul(a:bool,b:bool,c:int,d:bool) -> int {
+return 1;
+}
+fn div(){
+return 0;
+}
 // main function
 fn main() {
 c = add(a, 10);
