@@ -1,74 +1,42 @@
 class proj3
 {
-	field static int c
-	field static int a = 5
-	method public static int add(int,int)
-	max_stack 15
-	max_locals 15
-	{
-		iload 0
-		iload 1
-		iadd
-
-		ireturn
-	}
-	method public static void sub(int,int)
-	max_stack 15
-	max_locals 15
-	{
-		iload 0
-		iload 1
-		isub
-
-		return
-	}
-	method public static int mul(bool,int,bool,bool)
-	max_stack 15
-	max_locals 15
-	{
-		sipush 1
-
-		ireturn
-	}
-	method public static void div()
-	max_stack 15
-	max_locals 15
-	{
-		sipush 0
-
-		return
-	}
 	method public static void main(java.lang.String[])
 	max_stack 15
 	max_locals 15
 	{
-		getstatic int proj3.a
-		sipush 10
-		invokestatic int proj3.add(int,int)
-		putstatic int proj3.c
-		getstatic int proj3.c
+		sipush 0
+		istore 1
+		sipush 0
+		istore 2
+	L0:
+		iload 2
 		sipush 10
 		isub
-		ifgt L0
+		ifle L1
 		iconst_0
-		goto L1
-	L0:
-		icnost_1
+		goto L2
 	L1:
-		ifeq L2
-		getstatic java.io.PrintStream java.lang.System.out
-		getstatic int proj3.c
-		ineg
-		invokevirtual void java.io.PrintStream.print(int)
-	goto L3
+		icnost_1
 	L2:
-		getstatic java.io.PrintStream java.lang.System.out
-		getstatic int proj3.c
-		invokevirtual void java.io.PrintStream.print(int)
+		ifeq L3
+		iload 1
+		iload 2
+		iadd
+		istore 1
+		iload 2
+		sipush 1
+		iadd
+		istore 2
+		goto L0
 	L3:
 		getstatic java.io.PrintStream java.lang.System.out
-		ldc "Hello World"
-		invokevirtual void java.io.PrintStream.println(java.lang.String)
+		ldc "The sum is "
+		invokevirtual void java.io.PrintStream.print(java.lang.String)
+		goto L0
+	L0:
+		getstatic java.io.PrintStream java.lang.System.out
+		iload 1
+		invokevirtual void java.io.PrintStream.println(int)
 		return
 	}
 }
