@@ -11,11 +11,11 @@ fn main() {
     let mut temp:int;
     
     // compute the nth Fibonacci number
-    while (n > 2) {
-      temp = Fn;
-      Fn = Fn + FNminus1;
-      FNminus1 = temp;
-      n = n - 1;
+    while (n>2) {
+	    temp = Fn;
+	    Fn = Fn + FNminus1;
+	    FNminus1 = temp;
+        n = n - 1;
     }
     
     // print result

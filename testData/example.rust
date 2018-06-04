@@ -1,37 +1,26 @@
 /*
-* Example with Functions
-*/
+ * Example with Functions
+ */
+
 // variables
 let mut c;
 let mut a = 5;
-let b = 10;
-let k:int = 10;
-
+    
 // function declaration
-fn add(a:int, b:int) -> int {
-return a+b;
+fn add(a:int, b:int) -> int
+{
+  return a+b;
 }
-fn sub(a:int, b:int){
-return a - b;
-}
-fn mul(a:bool,b:bool,c:int,d:bool) -> int {
-return 1;
-}
-fn div(){
-return 0;
-}
+    
 // main function
-fn main() {
-let temp = 10;
-let mut d = 5;
-c = add(a, 10);
-c = d + 1;
-d = temp + 3;
-if (c > 10) {
-print -c;
-}
-else {
-print c;
-}
-println "Hello World";
+fn main() 
+{
+  c = add(a, 10);
+  if (c > 10) {
+    print -c;
+  }
+  else {
+    print c;
+  }
+  println "Hello World";
 }

@@ -4,37 +4,40 @@ class proj3
 	max_stack 15
 	max_locals 15
 	{
-		sipush 10
-		sipush 0
+		sipush 8
 		istore 0
-		sipush 0
+		sipush 1
 		istore 1
+		sipush 1
+		istore 2
 	L0:
-		iload 1
-		sipush 10
+		iload 0
+		sipush 2
 		isub
-		ifle L1
+		ifgt L1
 		iconst_0
 		goto L2
 	L1:
 		icnost_1
 	L2:
 		ifeq L3
-		iload 0
 		iload 1
-		iadd
-		istore 0
+		istore 3
 		iload 1
-		sipush 1
+		iload 2
 		iadd
 		istore 1
+		iload 3
+		istore 2
+		iload 0
+		sipush 1
+		isub
+		istore 0
 		goto L0
 	L3:
 		getstatic java.io.PrintStream java.lang.System.out
-		ldc "The sum is "
+		ldc "Result of computation: "
 		invokevirtual void java.io.PrintStream.print(java.lang.String)
-		goto L0
-	L0:
 		getstatic java.io.PrintStream java.lang.System.out
 		iload 0
 		invokevirtual void java.io.PrintStream.println(int)

@@ -256,18 +256,18 @@ func_block:
 return:
 		RETURN exp{
 			if(functypeinyacc!=7)
-				fprintf(java_code,"\n\t\tireturn\n\t}\n");
+				fprintf(java_code,"\t\tireturn\n\t}\n");
 			else
-				fprintf(java_code,"\n\t\treturn\n\t}\n");
+				fprintf(java_code,"\t\treturn\n\t}\n");
 			functypeinyacc = 0;
 			Trace("Reducing to return\n");
 		
 		} |
 		RETURN{
 			if(functypeinyacc!=7)
-				fprintf(java_code,"\n\t\tireturn\n\t}\n");
+				fprintf(java_code,"\t\tireturn\n\t}\n");
 			else
-				fprintf(java_code,"\n\t\treturn\n\t}\n");
+				fprintf(java_code,"\t\treturn\n\t}\n");
 			functypeinyacc = 0;
 			Trace("Reducing to return\n");
 		}
@@ -392,6 +392,7 @@ var_declared:
 			}
 			else if($5.token_type==T_BOOL){
 				v.data.bval = $5.bval;
+				
 				
 				if(symt.isGlobal()==1)
 					fprintf(java_code,"\tfield static bool %s = %d\n",$3.sval,$5.bval);
@@ -748,9 +749,6 @@ bool_exp:
 			$$.bval = false;
 			fprintf(java_code,"\t\ticonst_0\n");
 		} |
-		LOGICAL_NOT exp{
-			Trace("Reducing to bool_exp not\n");
-		} |
 		exp LESS exp{
 			$$.token_type = T_BOOL;
 			if($1.token_type==T_INT&&$3.token_type==T_INT){
@@ -1079,7 +1077,7 @@ loop_content:
 		fprintf(java_code,"\tL%d:\n",lstack[--lstack_top]);
 		lstack_top--;
 		Trace("Reducing to loop content\n");
-	}
+	} |
 	statement{
 		fprintf(java_code,"\t\tgoto L%d\n",lstack[lstack_top-2]);
 		fprintf(java_code,"\tL%d:\n",lstack[--lstack_top]);

@@ -4,7 +4,7 @@ YACC = bison
 LEX_FILENAME = scanner.l
 YACC_FILENAME = yaccpro2.y
 OUTPUT_FILENAME = output.exe
-TEST_FILENAME = ./testData/sigma.rust
+TEST_FILENAME = ./testData/fib.rust
 OTHER_SOURCE = symbols.cpp
 
 $(OUTPUT_FILENAME): clean lex.yy.o y.tab.o
