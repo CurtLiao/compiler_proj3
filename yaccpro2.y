@@ -667,8 +667,7 @@ exp:                                                                       //for
 		$$.ival = $1.ival;
 		$$.token_type = T_INT;
 		if(symt.isGlobal() == 0)
-			if(isconst!=1)
-				fprintf(java_code,"\t\tsipush %d\n",$1.ival);
+			fprintf(java_code,"\t\tsipush %d\n",$1.ival);
 		Trace("Reducing to exp\n");
 	} |
 	real_exp{

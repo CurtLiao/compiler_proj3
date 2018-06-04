@@ -22,8 +22,10 @@ varentry varNormal(string name, int type, bool isconst,int isg){
 	v.arrSize = 1;
 	v.global = isg;  
 	if(isg != 1){
-		v.javaStack_index = stackCount;
-		stackCount++;
+		if(isconst!=1){
+			v.javaStack_index = stackCount;
+			stackCount++;
+		}
 	}
 	if(type == T_STR){
 		v.data.sval = new char[1];
@@ -42,8 +44,10 @@ varentry varNormal_n(string name, int type, bool isconst,int isg){
 	v.arrSize = 1;
 	v.global = isg;
 	if(isg != 1){
-		v.javaStack_index = stackCount;
-		stackCount++;
+		if(isconst!=1){
+			v.javaStack_index = stackCount;
+			stackCount++;
+		}
 	}
 	if(type == T_STR){
 		v.data.sval = new char[1];
