@@ -1,7 +1,7 @@
 %{  
-#define Trace(t)        printf(t)
+//#define Trace(t)        printf(t)
 #define MAX_LENG 256
-//#define Trace(t)
+#define Trace(t)
 #include<iostream>
 #include<vector>
 #include<string>
@@ -760,7 +760,7 @@ bool_exp:
 				fprintf(java_code,"\t\tiflt L%d\n",lstack_c);
 				fprintf(java_code,"\t\ticonst_0\n");
 				fprintf(java_code,"\t\tgoto L%d\n",lstack_c+1);
-				fprintf(java_code,"\tL%d:\n\t\ticnost_1\n",lstack_c);
+				fprintf(java_code,"\tL%d:\n\t\ticonst_1\n",lstack_c);
 				fprintf(java_code,"\tL%d:\n",lstack_c+1);
 				lstack_c+=2;
 			}
@@ -773,7 +773,7 @@ bool_exp:
 				fprintf(java_code,"\t\tiflt L%d\n",lstack_c);
 				fprintf(java_code,"\t\ticonst_0\n");
 				fprintf(java_code,"\t\tgoto L%d\n",lstack_c+1);
-				fprintf(java_code,"\tL%d:\n\t\ticnost_1\n",lstack_c);
+				fprintf(java_code,"\tL%d:\n\t\ticonst_1\n",lstack_c);
 				fprintf(java_code,"\tL%d:\n",lstack_c+1);
 				lstack_c+=2;
 			}
@@ -792,7 +792,7 @@ bool_exp:
 				fprintf(java_code,"\t\tifgt L%d\n",lstack_c);
 				fprintf(java_code,"\t\ticonst_0\n");
 				fprintf(java_code,"\t\tgoto L%d\n",lstack_c+1);
-				fprintf(java_code,"\tL%d:\n\t\ticnost_1\n",lstack_c);
+				fprintf(java_code,"\tL%d:\n\t\ticonst_1\n",lstack_c);
 				fprintf(java_code,"\tL%d:\n",lstack_c+1);
 				lstack_c+=2;
 			}
@@ -805,7 +805,7 @@ bool_exp:
 				fprintf(java_code,"\t\tifgt L%d\n",lstack_c);
 				fprintf(java_code,"\t\ticonst_0\n");
 				fprintf(java_code,"\t\tgoto L%d\n",lstack_c+1);
-				fprintf(java_code,"\tL%d:\n\t\ticnost_1\n",lstack_c);
+				fprintf(java_code,"\tL%d:\n\t\ticonst_1\n",lstack_c);
 				fprintf(java_code,"\tL%d:\n",lstack_c+1);
 				lstack_c+=2;
 			}
@@ -873,7 +873,7 @@ bool_exp:
 				fprintf(java_code,"\t\tifge L%d\n",lstack_c);
 				fprintf(java_code,"\t\ticonst_0\n");
 				fprintf(java_code,"\t\tgoto L%d\n",lstack_c+1);
-				fprintf(java_code,"\tL%d:\n\t\ticnost_1\n",lstack_c);
+				fprintf(java_code,"\tL%d:\n\t\ticonst_1\n",lstack_c);
 				fprintf(java_code,"\tL%d:\n",lstack_c+1);
 				lstack_c+=2;
 			}
@@ -886,7 +886,7 @@ bool_exp:
 				fprintf(java_code,"\t\tifge L%d\n",lstack_c);
 				fprintf(java_code,"\t\ticonst_0\n");
 				fprintf(java_code,"\t\tgoto L%d\n",lstack_c+1);
-				fprintf(java_code,"\tL%d:\n\t\ticnost_1\n",lstack_c);
+				fprintf(java_code,"\tL%d:\n\t\ticonst_1\n",lstack_c);
 				fprintf(java_code,"\tL%d:\n",lstack_c+1);
 				lstack_c+=2;
 			}
@@ -905,7 +905,7 @@ bool_exp:
 				fprintf(java_code,"\t\tifle L%d\n",lstack_c);
 				fprintf(java_code,"\t\ticonst_0\n");
 				fprintf(java_code,"\t\tgoto L%d\n",lstack_c+1);
-				fprintf(java_code,"\tL%d:\n\t\ticnost_1\n",lstack_c);
+				fprintf(java_code,"\tL%d:\n\t\ticonst_1\n",lstack_c);
 				fprintf(java_code,"\tL%d:\n",lstack_c+1);
 				lstack_c+=2;
 			}
@@ -918,7 +918,7 @@ bool_exp:
 				fprintf(java_code,"\t\tifle L%d\n",lstack_c);
 				fprintf(java_code,"\t\ticonst_0\n");
 				fprintf(java_code,"\t\tgoto L%d\n",lstack_c+1);
-				fprintf(java_code,"\tL%d:\n\t\ticnost_1\n",lstack_c);
+				fprintf(java_code,"\tL%d:\n\t\ticonst_1\n",lstack_c);
 				fprintf(java_code,"\tL%d:\n",lstack_c+1);
 				lstack_c+=2;
 			}
@@ -937,7 +937,7 @@ bool_exp:
 				fprintf(java_code,"\t\tifne L%d\n",lstack_c);
 				fprintf(java_code,"\t\ticonst_0\n");
 				fprintf(java_code,"\t\tgoto L%d\n",lstack_c+1);
-				fprintf(java_code,"\tL%d:\n\t\ticnost_1\n",lstack_c);
+				fprintf(java_code,"\tL%d:\n\t\ticonst_1\n",lstack_c);
 				fprintf(java_code,"\tL%d:\n",lstack_c+1);
 				lstack_c+=2;
 			}
@@ -950,7 +950,7 @@ bool_exp:
 				fprintf(java_code,"\t\tifne L%d\n",lstack_c);
 				fprintf(java_code,"\t\ticonst_0\n");
 				fprintf(java_code,"\t\tgoto L%d\n",lstack_c+1);
-				fprintf(java_code,"\tL%d:\n\t\ticnost_1\n",lstack_c);
+				fprintf(java_code,"\tL%d:\n\t\ticonst_1\n",lstack_c);
 				fprintf(java_code,"\tL%d:\n",lstack_c+1);
 				lstack_c+=2;
 			}
@@ -969,7 +969,7 @@ bool_exp:
 				fprintf(java_code,"\t\tifeq L%d\n",lstack_c);
 				fprintf(java_code,"\t\ticonst_0\n");
 				fprintf(java_code,"\t\tgoto L%d\n",lstack_c+1);
-				fprintf(java_code,"\tL%d:\n\t\ticnost_1\n",lstack_c);
+				fprintf(java_code,"\tL%d:\n\t\ticonst_1\n",lstack_c);
 				fprintf(java_code,"\tL%d:\n",lstack_c+1);
 				lstack_c+=2;
 			}
@@ -982,7 +982,7 @@ bool_exp:
 				fprintf(java_code,"\t\tifeq L%d\n",lstack_c);
 				fprintf(java_code,"\t\ticonst_0\n");
 				fprintf(java_code,"\t\tgoto L%d\n",lstack_c+1);
-				fprintf(java_code,"\tL%d:\n\t\ticnost_1\n",lstack_c);
+				fprintf(java_code,"\tL%d:\n\t\ticonst_1\n",lstack_c);
 				fprintf(java_code,"\tL%d:\n",lstack_c+1);
 				lstack_c+=2;
 			}

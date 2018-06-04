@@ -18,7 +18,7 @@ class proj3
 		iconst_0
 		goto L2
 	L1:
-		icnost_1
+		iconst_1
 	L2:
 		ifeq L3
 		iload 1
