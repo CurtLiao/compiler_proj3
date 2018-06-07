@@ -713,6 +713,9 @@ exp:                                                                       //for
 						fprintf(java_code,"\t\ticonst_ %d\n",vcheck.data.bval);
 				}
 			}
+			else if(vcheck.type==T_STR){                                            //bool assign
+				fprintf(java_code,"\t\tldc \"%s\"\n",vcheck.data.sval);
+			}
 		}
 		else{
 				yyerror("not define");

@@ -1,46 +1,57 @@
 class proj3
 {
+	field static int c
+	field static int a = 5
+	method public static int add(int,int)
+	max_stack 15
+	max_locals 15
+	{
+		iload 0
+		iload 1
+		iadd
+		ireturn
+	}
 	method public static void main(java.lang.String[])
 	max_stack 15
 	max_locals 15
 	{
-		sipush 8
-		istore 0
 		sipush 1
-		istore 1
-		sipush 1
-		istore 2
-	L0:
-		iload 0
 		sipush 2
-		isub
-		ifgt L1
-		iconst_0
-		goto L2
-	L1:
-		iconst_1
-	L2:
-		ifeq L3
-		iload 1
-		istore 3
-		iload 1
-		iload 2
 		iadd
-		istore 1
-		iload 3
-		istore 2
-		iload 0
-		sipush 1
-		isub
 		istore 0
-		goto L0
+		getstatic int proj3.a
+		sipush 10
+		invokestatic int proj3.add(int,int)
+		putstatic int proj3.c
+		getstatic int proj3.c
+		sipush 10
+		isub
+		ifgt L0
+		iconst_0
+		goto L1
+	L0:
+		iconst_1
+	L1:
+		ifeq L2
+		getstatic java.io.PrintStream java.lang.System.out
+		getstatic int proj3.c
+		ineg
+		invokevirtual void java.io.PrintStream.print(int)
+	goto L3
+	L2:
+		getstatic java.io.PrintStream java.lang.System.out
+		getstatic int proj3.c
+		invokevirtual void java.io.PrintStream.print(int)
 	L3:
 		getstatic java.io.PrintStream java.lang.System.out
-		ldc "Result of computation: "
+		ldc "Hello World"
+		invokevirtual void java.io.PrintStream.println(java.lang.String)
+		getstatic java.io.PrintStream java.lang.System.out
+		ldc "abc"
 		invokevirtual void java.io.PrintStream.print(java.lang.String)
 		getstatic java.io.PrintStream java.lang.System.out
 		iload 0
-		invokevirtual void java.io.PrintStream.println(int)
+		invokevirtual void java.io.PrintStream.print(int)
 		return
 	}
 }
