@@ -710,7 +710,7 @@ exp:                                                                       //for
 					if(vcheck.isconst==0)
 						fprintf(java_code,"\t\tiload %d\n",vcheck.javaStack_index);
 					else
-						fprintf(java_code,"\t\ticonst_ %d\n",vcheck.data.bval);
+						fprintf(java_code,"\t\tsipush %d\n",vcheck.data.bval);
 				}
 			}
 			else if(vcheck.type==T_STR){                                            //bool assign

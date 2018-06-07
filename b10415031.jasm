@@ -15,10 +15,12 @@ class proj3
 	max_stack 15
 	max_locals 15
 	{
-		sipush 1
-		sipush 2
-		iadd
+		iconst_0
+		iconst_1
 		istore 0
+		iconst_0
+		istore 1
+		iconst_1
 		getstatic int proj3.a
 		sipush 10
 		invokestatic int proj3.add(int,int)
@@ -47,11 +49,17 @@ class proj3
 		ldc "Hello World"
 		invokevirtual void java.io.PrintStream.println(java.lang.String)
 		getstatic java.io.PrintStream java.lang.System.out
-		ldc "abc"
-		invokevirtual void java.io.PrintStream.print(java.lang.String)
+		sipush 0
+		invokevirtual void java.io.PrintStream.println(int)
 		getstatic java.io.PrintStream java.lang.System.out
 		iload 0
-		invokevirtual void java.io.PrintStream.print(int)
+		invokevirtual void java.io.PrintStream.println(int)
+		getstatic java.io.PrintStream java.lang.System.out
+		iload 1
+		invokevirtual void java.io.PrintStream.println(int)
+		getstatic java.io.PrintStream java.lang.System.out
+		sipush 1
+		invokevirtual void java.io.PrintStream.println(int)
 		return
 	}
 }

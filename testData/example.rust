@@ -16,7 +16,10 @@ fn add(a:int, b:int) -> int
 // main function
 fn main() 
 {
-  let mut ss = 1 + 2;
+  let ss = false;
+  let mut s = true;
+  let mut sa:bool = false;
+  let sb:bool = true;
   c = add(a, 10);
   if (c > 10) {
     print -c;
@@ -25,6 +28,8 @@ fn main()
     print c;
   }
   println "Hello World";
-  print s;
-  print ss;
+  println ss;
+  println s;
+  println sa;
+  println sb;
 }
